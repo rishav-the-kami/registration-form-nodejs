@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{>head}} 
+    <title>Login</title>
+</head>
+<body>
+    {{>navbar}}
+    <form action="/login" method="post">
+        <input type="email" id="email" name="email" placeholder="Email">
+        <input type="password" id="password" name="password" placeholder="Password">
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
