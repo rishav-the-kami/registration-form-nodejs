@@ -4,6 +4,7 @@ const app = express()
 const port = process.env.PORT || 80
 const path = require("path")
 const hbs = require("hbs")
+const cookieParser = require("cookie-parser")
 require("../db/conn")
 
 const staticPath = path.join(__dirname, "../public")
@@ -11,6 +12,7 @@ const templatePath = path.join(__dirname, "../templates/views")
 const partialsPath = path.join(__dirname, "../templates/partials")
 
 app.use(express.static(staticPath))
+app.use(cookieParser())
 app.set("view engine", "hbs")
 app.set("views", templatePath) 
 hbs.registerPartials(partialsPath)

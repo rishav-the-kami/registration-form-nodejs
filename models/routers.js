@@ -3,9 +3,10 @@ const router = new express.Router()
 const Register = require("../db/registers")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
+const auth = require("../middleware/auth")
 
-router.get("/", (req, res) => {
-    res.render("index", { ok: "display: none", name: "Rishav" })
+router.get("/", auth, (req, res) => {
+    
 })
 router.get("/register", (req, res) => {
     res.render("register")
@@ -28,10 +29,20 @@ router.post("/register", async(req, res) => {
         const token = await newData.generateAuthToken()
         console.log(token)
 
+
+        // NOTE 
+        // The res.cookie() function is used to set the cookie name to value.
+        // The cookie value may be a string or an object value converted to JSON.
+        // NOTE SYNTAX: res.cookie(name, value,  [options] (options is optional to give))
+        res.cookie("jwt", token, {
+            expires: new Date(Date.now() + 600000),
+            httpOnly: true
+        })
+
         const savedNewData = await newData.save()
         
         console.log(savedNewData)
-        res.status(200).render("index", { ok: "display: block", name: `${savedNewData.fname} ${savedNewData.lname}` })
+        res.status(200).render("forAuth'd", { name: `${savedNewData.fname} ${savedNewData.lname}` })
     }
     catch(err) {
         console.log(err)
@@ -54,9 +65,13 @@ router.post("/login", async(req, res) => {
         if(checkPassword) {
             const token = await receivedData.generateAuthToken()
             console.log(token)
+            res.cookie("jwt", token, {
+                expires: new Date(Date.now() + 600000),
+                httpOnly: true
+            })
             
             if(receivedData)
-                res.status(201).render("index", { ok: "display: block", name: `${receivedData.fname} ${receivedData.lname}` })
+                res.status(201).render("forAuth'd", { name: `${receivedData.fname} ${receivedData.lname}` })
         }
         else
             res.send("Invalid Authentication")
